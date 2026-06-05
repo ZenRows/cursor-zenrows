@@ -2,61 +2,61 @@
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) 18 or later
-- A [ZenRows API key](https://app.zenrows.com/register) in `~/.zenrows.env`
+- [Cursor](https://cursor.com) for testing the plugin
+- [Node.js](https://nodejs.org/) 18 or later (to run the validator)
+- `python3` (used by the local-install script)
+- A [ZenRows account](https://app.zenrows.com/register) to authorize with via OAuth
 
-## Local dev loop
+End users need none of the above except Cursor and a ZenRows account; there is no local server and no API key. Node and python are only for the dev tooling here.
 
-Install the plugin into Cursor for live dogfooding:
+## Local testing in Cursor
+
+Cursor's IDE has no "load from a local folder" option, so `scripts/local-install.sh` does it for you: it copies the plugin into `~/.cursor/plugins/zenrows/` and registers it through the `~/.claude` config surface that Cursor shares with Claude Code. It upserts `~/.claude/plugins/installed_plugins.json` and `~/.claude/settings.json` without clobbering other plugins.
 
 ```bash
 bash scripts/local-install.sh
 ```
 
-This copies the repo into `~/.cursor/plugins/local/zenrows` and rewrites `.mcp.json` with absolute paths (required — Cursor plugin MCP does not resolve relative paths). Fully quit and reopen Cursor after each sync.
+If your rules, skills, or commands do not appear after a restart, turn on "Include third-party Plugins, Skills, and other configs" under Settings, Features. Then fully quit Cursor (Cmd+Q) and reopen. There is no hot reload, so re-run the script and restart after each change.
 
-Iterate on `rules/zenrows.mdc` or any `skills/*/SKILL.md`, re-run the script, and reopen Cursor to pick up changes. No Node.js restart needed for rules and skills — only for `.mcp.json` changes.
+Because auth is OAuth, the first time the server connects you authorize in the browser; no key or environment variable is involved. If the connection hangs, run "Cursor: Clear All MCP Tokens" from the command palette, restart, and re-authorize.
 
-## Validate plugin structure
+This registration path is community-documented and macOS-tested. Paths and the third-party-content toggle may differ on Linux and Windows and across Cursor versions.
+
+## Test the MCP connection outside Cursor
+
+There is no local server to run; the plugin points at the hosted ZenRows MCP. To exercise the tools directly, use the MCP Inspector and connect it to the remote URL, which walks you through the OAuth login:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+Then add a server with HTTP transport and URL `https://mcp.zenrows.com/mcp`, authorize, and call `scrape`. Verify the inspector's current flags; its UI changes occasionally.
+
+## Validate before a PR
 
 ```bash
 node scripts/validate-template.mjs
 ```
 
-Checks manifest fields, frontmatter on all rules and skills, and MCP config. Run before opening a PR.
-
-## Test the MCP server manually
-
-```bash
-node scripts/run-mcp.mjs
-# ZenRows MCP server running on stdio
-# Ctrl+C to exit
-```
-
-Useful for verifying the launcher reads `~/.zenrows.env` and starts `@zenrows/mcp` correctly, without needing Cursor open.
+Checks manifest fields, frontmatter on every rule, skill, and command, and the MCP config. Must pass.
 
 ## What's where
 
 | Path | Purpose |
 |------|---------|
 | `.cursor-plugin/plugin.json` | Marketplace manifest |
-| `rules/zenrows.mdc` | Always-on agent rule (cost awareness, tool selection) |
-| `skills/*/SKILL.md` | Task-specific agent workflows |
-| `.mcp.json` | MCP server config for the published plugin |
-| `scripts/local-install.sh` | Sync to local Cursor plugin dir for dogfooding |
-| `scripts/run-mcp.mjs` | Standalone MCP launcher for manual testing |
+| `.mcp.json` | MCP config: the hosted ZenRows MCP server URL, authorized via OAuth |
+| `rules/zenrows.mdc` | Always-on agent rule |
+| `skills/<name>/SKILL.md` | Task-specific workflows |
+| `commands/zenrows-doctor.md` | `/zenrows-doctor` slash command |
+| `scripts/local-install.sh` | Sync and register the plugin for local Cursor testing |
 | `scripts/validate-template.mjs` | Pre-submit structure validator |
+| `AGENTS.md` | Orientation for AI agents working on this repo |
 
-## Making changes
+## Submitting a version
 
-- **Rules / skills** — edit the markdown, run `local-install.sh`, reopen Cursor, test in an agent conversation.
-- **MCP config** — changes to `.mcp.json` require re-running `local-install.sh` and a full Cursor restart.
-- **Manifest** — run `validate-template.mjs` after any `plugin.json` edit.
-
-## Submitting a new version
-
-1. Bump `version` in `.cursor-plugin/plugin.json`.
-2. Add an entry to `CHANGELOG.md`.
-3. Run `node scripts/validate-template.mjs` — must pass.
-4. Open a PR; merge to `main`.
-5. The Cursor Marketplace review team picks up the updated repo on next review cycle.
+1. Bump `version` in `.cursor-plugin/plugin.json` (SemVer).
+2. Add a `CHANGELOG.md` entry.
+3. Run `node scripts/validate-template.mjs`; it must pass.
+4. Open a PR and merge to `main`. The Cursor Marketplace review team picks up `main` on the next cycle.

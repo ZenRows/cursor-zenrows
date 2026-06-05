@@ -1,23 +1,18 @@
 ---
 name: extract-structured-data
-description: Extract specific data fields from webpages. Use when the user asks to extract, get all prices, list products, pull emails, find links, or parse a table.
+description: Pull specific data fields from a page rather than its full content: prices, product attributes, emails, links, or table rows. Use when the user names the fields they want or asks for "all" of a thing on one page. Not for reading a page's prose (use scrape-webpage), not for discovering a site's URLs (use map), and not for collecting many pages (use crawl).
 ---
 
 # Extract structured data
 
-## When to use
-
-- User wants specific fields, not full page content
-- User asks for prices, products, emails, links, or table data
-- Triggers: "extract", "get all prices", "list all products", "pull the emails from", "find all links on", "parse the table at"
-
 ## Instructions
 
-1. Ask the user (or infer from context) what specific data fields are needed.
-2. If fields are clearly structured (price, title, SKU): use `css_extractor` with a JSON selector map, e.g. `'{"title":"h1","price":".price"}'`.
-3. If fields are semi-structured (articles, listings, product pages): use `autoparse=true`.
-4. If bulk extraction is needed (all links, all emails, all images): use the `outputs` parameter (comma-separated types or `*` for all).
-5. Format the extracted JSON for the user's intended purpose (display, file export, or code consumption).
+1. Identify, or infer from context, the specific fields the user needs.
+2. Named, clearly structured fields (title, price, SKU): use `css_extractor` with a JSON selector map, for example `'{"title":"h1","price":".price"}'`.
+3. Semi-structured pages (articles, listings, product pages): use `autoparse=true`.
+4. Bulk content of one type (all links, all emails, all images): use `outputs` (comma-separated types, or `*` for all).
+5. Use `mode='auto'` on the underlying call so protected or JS-heavy pages still return.
+6. Format the extracted JSON for the user's purpose: display, file export, or code.
 
 ## Parameter guide
 
@@ -26,7 +21,3 @@ description: Extract specific data fields from webpages. Use when the user asks 
 | Named fields via CSS | `css_extractor` | `'{"title":"h1","price":".price-tag"}'` |
 | Auto-structured JSON | `autoparse` | `autoparse=true` |
 | Bulk content types | `outputs` | `outputs='emails,links'` or `outputs='*'` |
-
-## Cost note
-
-Targeted extraction reduces payload size and avoids 413 errors on large pages.

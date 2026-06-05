@@ -1,12 +1,7 @@
 {
   "mcpServers": {
     "zenrows": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@zenrows/mcp"],
-      "env": {
-        "ZENROWS_API_KEY": "${ZENROWS_API_KEY}"
-      }
+      "url": "https://mcp.zenrows.com/mcp"
     }
   }
 }

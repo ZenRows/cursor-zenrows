@@ -1,8 +1,8 @@
 {
   "name": "zenrows",
   "displayName": "ZenRows",
-  "version": "1.0.0",
-  "description": "Web scraping for Cursor. Fetch any webpage — JS-rendered, anti-bot protected, geo-restricted — directly from your AI agent. Powered by ZenRows Universal Scraper API and Scraping Browser.",
+  "version": "0.1.0",
+  "description": "Web data for Cursor: scrape, crawl, map, browser automation, and structured extraction, straight from your AI agent. Powered by the ZenRows Universal Scraper API and Scraping Browser.",
   "author": {
     "name": "ZenRows",
     "email": "support@zenrows.com"
@@ -12,19 +12,20 @@
   "license": "MIT",
   "keywords": [
     "web-scraping",
-    "anti-bot",
+    "crawler",
+    "site-map",
     "browser-automation",
     "data-extraction",
-    "javascript-rendering",
-    "proxy",
+    "anti-bot",
     "mcp",
     "scraping-api",
     "zenrows"
   ],
   "category": "data-and-analytics",
-  "tags": ["web-scraping", "anti-bot", "browser-automation", "mcp"],
+  "tags": ["web-scraping", "crawling", "browser-automation", "mcp"],
   "logo": "assets/logo.png",
   "rules": "rules",
   "skills": "skills",
+  "commands": "commands",
   "mcpServers": ".mcp.json"
 }

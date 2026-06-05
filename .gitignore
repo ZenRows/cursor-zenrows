@@ -1,7 +1,8 @@
-# Environment and secrets
-.env
-.env.*
-!.env.example
+# Secrets and env (covers .env, .zenrows.env, and any *.env)
+*.env
+
+# ZenRows scrape output (crawl/map write here)
+.zenrows/
 
 # OS and editor
 .DS_Store
