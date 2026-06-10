@@ -26,6 +26,7 @@ Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
 - Default to `mode='auto'` (Adaptive Stealth Mode). It starts simple and escalates to JS rendering or premium proxies automatically, only when a site needs it, and bills only for the configuration that succeeds. Do not set `js_render` or `premium_proxy` by hand; `mode='auto'` manages them.
+- Before starting any multi-page or multi-step task (crawl, bulk extraction, browser session loop), confirm scope with the user if it is not explicit — page count, depth limit, or a clear stopping condition. Each request consumes credits; an unbounded task can be costly.
 
 ## B. Parameter notes
 
