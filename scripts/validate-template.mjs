@@ -196,6 +196,17 @@ async function validateFrontmatterFile(filePath, componentName, requiredKeys, pl
       addError(`${pluginName}: ${componentName} file missing "${key}" in frontmatter: ${relativeFile}`);
     }
   }
+
+  // An unquoted YAML scalar containing ": " is a parse error, not a string.
+  // Clients that use a real YAML parser silently drop the whole component.
+  for (const [key, value] of Object.entries(parsed)) {
+    const quoted = value.startsWith("'") || value.startsWith('"');
+    if (!quoted && (value.includes(": ") || value.endsWith(":"))) {
+      addError(
+        `${pluginName}: ${componentName} frontmatter "${key}" contains an unquoted ":" and will fail YAML parsing: ${relativeFile}. Wrap the value in single quotes.`
+      );
+    }
+  }
 }
 
 async function validateComponentFrontmatter(pluginDir, pluginName) {

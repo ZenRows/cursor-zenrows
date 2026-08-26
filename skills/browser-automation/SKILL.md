@@ -1,6 +1,6 @@
 ---
 name: browser-automation
-description: Drive a page through steps before its content is available: clicking, filling forms, logging in, paginating, or multi-step navigation that a single fetch cannot do. Use when interaction is required to reach the content. Not for static page reads (use scrape-webpage), and not for passively listing the network or API calls a page makes (use capture-api-calls).
+description: 'Drive a page through steps before its content is available: clicking, filling forms, logging in, paginating, or multi-step navigation that a single fetch cannot do. Use when interaction is required to reach the content. Not for static page reads (use scrape-webpage), and not for passively listing the network or API calls a page makes (use capture-api-calls).'
 ---
 
 # Browser automation

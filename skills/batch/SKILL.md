@@ -1,11 +1,15 @@
 ---
 name: batch
-description: Fetch a list of URLs the user already has as one managed Zenrows job, with retries and per-task results. Use when the user supplies or points at many URLs (a file, a pasted list, the output of map) and wants their content or extracted fields. Not for discovering URLs by following links (use crawl), not for listing a site's URLs (use map), and not for a single page (use scrape-webpage).
+description: Fetch a list of URLs the user already has as one managed Zenrows job, with retries and per-task results. Use when the user supplies or points at roughly five or more URLs (a file, a pasted list, the output of map) and wants their content or extracted fields. Not for discovering URLs by following links (use crawl), not for listing a site's URLs (use map), and not for a single page (use scrape-webpage).
 ---
 
 # Batch
 
-Zenrows Batch queues many URLs as one server-side job, retries transient failures, and stores the results. Prefer it over looping `scrape` whenever the URL list is already known: one job instead of N round trips, and no concurrency-limit juggling.
+Zenrows Batch queues many URLs as one server-side job, retries transient failures, and stores the results.
+
+## When to use this instead of `scrape`
+
+Use batch at roughly five URLs or more. Below that, parallel `scrape` calls are faster and simpler, since a job costs a create, a wait and a results fetch. Above it, batch wins: one job instead of N round trips, server-side retries, and no plan-concurrency 429s (the Developer plan allows 5 concurrent requests).
 
 ## Instructions
 

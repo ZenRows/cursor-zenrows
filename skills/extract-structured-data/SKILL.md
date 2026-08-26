@@ -1,6 +1,6 @@
 ---
 name: extract-structured-data
-description: Pull specific data fields from one page rather than its full content: prices, product attributes, article fields, or table rows. Use when the user names the fields they want or asks for structured JSON from a single URL. Not for reading a page's prose (use scrape-webpage), not for discovering a site's URLs (use map), not for many pages by following links (use crawl), and not for a list of URLs the user already has (use batch).
+description: 'Pull specific data fields from one page rather than its full content: prices, product attributes, article fields, or table rows. Use when the user names the fields they want or asks for structured JSON from a single URL. Not for reading a page''s prose (use scrape-webpage), not for discovering a site''s URLs (use map), not for many pages by following links (use crawl), and not for a list of URLs the user already has (use batch).'
 ---
 
 # Extract structured data

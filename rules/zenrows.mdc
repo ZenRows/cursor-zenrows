@@ -34,7 +34,7 @@ A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`
 - When the user asks to scrape, fetch, or read a URL, call the `scrape` MCP tool immediately. Do not inspect plugin repo files (`mcp.json`, manifests, README) or diagnose MCP setup unless the user explicitly asks about installation, configuration, or debugging.
 - Use `scrape` for single-page reads: documentation, blog posts, pricing pages, API references, changelogs, product listings.
 - Use `extract` when the user wants named fields or structured JSON from one page, not its prose.
-- Use `batch_create` when the user already has a list of URLs. One job beats a loop of `scrape` calls: server-side retries, no concurrency juggling. Confirm the list size first; a batch bills per URL.
+- Use `batch_create` when the user already has roughly five or more URLs. Below that, parallel `scrape` calls are cheaper than a job round trip. Above it, one job beats N calls: server-side retries, no concurrency 429s. Confirm the list size with the user first; a batch bills per URL.
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
 - Default to `mode='auto'` (Adaptive Stealth Mode). It starts simple and escalates to JS rendering or premium proxies automatically, only when a site needs it, and bills only for the configuration that succeeds. Do not set `js_render` or `premium_proxy` by hand; `mode='auto'` manages them.
