@@ -39,7 +39,7 @@ Run `/zenrows-doctor` in a chat to confirm the connection is live and authorized
 | Component | Purpose |
 |-----------|---------|
 | `rules/zenrows.mdc` | Always-on guidance for tool selection and safe use |
-| `skills/` | Task workflows: scrape, extract, crawl, map, browser automation, API discovery, getting started |
+| `skills/` | Task workflows: scrape, extract, batch, crawl, map, browser automation, API discovery, getting started |
 | `commands/zenrows-doctor.md` | `/zenrows-doctor` connection and auth check |
 | `mcp.json` | Connects to the hosted Zenrows MCP server over OAuth |
 

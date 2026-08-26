@@ -1,7 +1,7 @@
 {
   "name": "zenrows",
   "displayName": "Zenrows",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Web data for Cursor: scrape, crawl, map, browser automation, and structured extraction, straight from your AI agent. Powered by Zenrows Fetch and Browser Sessions.",
   "author": {
     "name": "Zenrows",

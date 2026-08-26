@@ -1,6 +1,6 @@
 ---
 name: scrape-webpage
-description: Retrieve the content of one specific web page. Use when the user wants to read, fetch, summarize, or get what a single URL says, including pages that block ordinary requests or need JavaScript. Not for discovering the URLs on a site (use map or crawl), not for pulling specific fields like prices or emails (use extract-structured-data), and not for pages that require clicks, logins, or form input (use browser-automation).
+description: Retrieve the content of one specific web page. Use when the user wants to read, fetch, summarize, or get what a single URL says, including pages that block ordinary requests or need JavaScript. Not for discovering the URLs on a site (use map or crawl), not for a list of URLs the user already has (use batch), not for pulling specific fields like prices or emails (use extract-structured-data), and not for pages that require clicks, logins, or form input (use browser-automation).
 ---
 
 # Scrape webpage

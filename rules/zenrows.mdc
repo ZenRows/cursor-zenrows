@@ -15,6 +15,16 @@ Single-request page retrieval, backed by Zenrows Fetch. Returns markdown (defaul
 
 Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`, `autoparse`, `outputs`, `wait_for`, `wait`, `js_instructions`, `screenshot`, `screenshot_fullpage`, `screenshot_selector`, `session_id`, `custom_headers`.
 
+### `extract`
+
+Structured extraction from one page. Returns JSON. Params: `url`, `mode` (`auto` | `autoparse` | `css`), `css_extractor` (required when `mode='css'`), `js_render`, `premium_proxy`, `mode_auto`, `proxy_country`, `wait_for`, `wait`, `fallback_autoparse`.
+
+`mode` on `extract` selects the extraction strategy. It is NOT the stealth `mode` used by `scrape`; Adaptive Stealth on `extract` is the boolean `mode_auto`.
+
+### `batch_*`
+
+A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`), `batch_status`, `batch_wait`, `batch_results` (optional `status` filter), `batch_cancel`. Server-side retries; results fetched by `job_id`.
+
 ### `browser_*`
 
 30+ tools for multi-step browser automation (Browser Sessions): `browser_navigate`, `browser_click`, `browser_fill`, `browser_scroll`, `browser_evaluate`, `browser_screenshot`, `browser_get_html`, `browser_close`, cookie and tab management, and more.
@@ -23,6 +33,8 @@ Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`
 
 - When the user asks to scrape, fetch, or read a URL, call the `scrape` MCP tool immediately. Do not inspect plugin repo files (`mcp.json`, manifests, README) or diagnose MCP setup unless the user explicitly asks about installation, configuration, or debugging.
 - Use `scrape` for single-page reads: documentation, blog posts, pricing pages, API references, changelogs, product listings.
+- Use `extract` when the user wants named fields or structured JSON from one page, not its prose.
+- Use `batch_create` when the user already has a list of URLs. One job beats a loop of `scrape` calls: server-side retries, no concurrency juggling. Confirm the list size first; a batch bills per URL.
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
 - Default to `mode='auto'` (Adaptive Stealth Mode). It starts simple and escalates to JS rendering or premium proxies automatically, only when a site needs it, and bills only for the configuration that succeeds. Do not set `js_render` or `premium_proxy` by hand; `mode='auto'` manages them.
@@ -47,12 +59,14 @@ Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`
 - `mode='auto'` handles most blocking and rendering issues by escalating internally, so a single call is usually enough. Do not build manual retry ladders around it.
 - 429 (Too Many Requests): the plan concurrency limit was hit. Wait and retry, or tell the user about their plan limits.
 - 413 (Content Too Large): narrow the response with `css_extractor`, or keep `response_type: markdown`, to reduce payload size.
+- `AUTH010` from `extract`: the domain is outside the Extract open beta. `fallback_autoparse` defaults to `true` and retries with autoparse; only surface the error if the user asked for strict extraction.
 - 401 or an `AUTH` error code: the OAuth session is missing or expired. Tell the user to complete the Zenrows login in the client (Cursor shows "Needs login" next to the server); do not attempt to supply a key.
 
 ## Concurrency
 
 Zenrows plans have concurrency limits (for example 5 on Developer, up to 100 or more on higher plans). The agent may fire multiple tool calls in parallel.
 
+- Prefer one `batch_create` over many parallel `scrape` calls. Batch manages its own queueing; parallel calls hit the plan limit and return 429.
 - Always call `browser_close` when a browser session is done, to free a concurrency slot.
 - Do not leave multiple browser sessions open at once.
 - If the user cancels a task mid-flight, Zenrows may keep processing server-side for up to 3 minutes, which holds a slot until it completes.

@@ -45,7 +45,8 @@ Cursor activates skills on the `description` field, not the body. Do not rely on
 Skills must be mutually exclusive. Each description should say what the skill is for and what it is not for, naming the sibling skill to use instead. The current set and its lanes:
 
 - `scrape-webpage`: one page's content, including protected or JS pages via `mode='auto'`.
-- `extract-structured-data`: specific fields from one page (prices, emails, links, tables).
+- `extract-structured-data`: specific fields from one page, via the `extract` tool.
+- `batch`: a known list of URLs, submitted as one managed job via `batch_*`.
 - `crawl`: many pages by following internal links from a seed.
 - `map`: URL discovery without fetching content.
 - `browser-automation`: interaction (clicks, forms, login, pagination).
@@ -79,8 +80,10 @@ Zenrows ships four primitives: Fetch, Extract, Batch, and Browser Sessions. This
 
 - Fetch, the `scrape` tool. Params: `mode='auto'` (adaptive stealth, the default), `proxy_country`, `css_extractor`, `autoparse`, `outputs`, `wait_for`, `wait`, `js_instructions`, `response_type`, `screenshot*`, `session_id`, `custom_headers`. `js_render` and `premium_proxy` exist but are managed by `mode='auto'`; do not set them by hand.
 - Browser Sessions, the `browser_*` tools. Always start with `browser_navigate` (returns `session_id`) and always end with `browser_close`.
-- Extract is reached through `scrape` parameters (`autoparse`, `css_extractor`, `outputs`), not a separate MCP tool.
-- Batch (large managed URL jobs) has no documented MCP tool as of 2026-08-26; it is REST and SDK only, see https://docs.zenrows.com/batch/introduction. Do not write skills that assume an MCP batch tool without confirming against the live server.
+- Extract, the `extract` tool. A first-class MCP tool, not just `scrape` parameters.
+- Batch, the `batch_*` tools: `batch_create`, `batch_status`, `batch_wait`, `batch_results`, `batch_cancel`. A managed job lifecycle, not a client-side loop.
+- Note: `browser_batch` batches actions inside a browser session. It is unrelated to the Batch product.
+- The hosted server exposed 43 tools when verified on 2026-08-26. docs.zenrows.com/mcp/overview lists only `scrape` and `browser_*` and is behind; trust the live tool list in the client.
 - Residential Proxies, not exposed via MCP.
 
 If the hosted MCP exposes a usage or subscription-status tool, `/zenrows-doctor` should call it for plan and credit reporting. Otherwise doctor falls back to a probe scrape to confirm connection and authorization.
