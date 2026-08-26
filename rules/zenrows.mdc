@@ -1,27 +1,27 @@
 ---
-description: Guidance for using the ZenRows scrape and browser_* MCP tools.
+description: Guidance for using the Zenrows scrape and browser_* MCP tools.
 alwaysApply: true
 ---
 
-# ZenRows MCP
+# Zenrows MCP
 
-You have access to the ZenRows MCP server. Use it to fetch live web content, extract structured data, and run browser automation without writing scraping code.
+You have access to the Zenrows MCP server. Use it to fetch live web content, extract structured data, and run browser automation without writing scraping code.
 
 ## Available tools
 
 ### `scrape`
 
-Single-request fetch backed by the Universal Scraper API. Returns markdown (default), plaintext, HTML, PDF, structured JSON, or screenshots.
+Single-request page retrieval, backed by Zenrows Fetch. Returns markdown (default), plaintext, HTML, PDF, structured JSON, or screenshots.
 
 Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`, `autoparse`, `outputs`, `wait_for`, `wait`, `js_instructions`, `screenshot`, `screenshot_fullpage`, `screenshot_selector`, `session_id`, `custom_headers`.
 
 ### `browser_*`
 
-30+ tools for multi-step browser automation (Scraping Browser): `browser_navigate`, `browser_click`, `browser_fill`, `browser_scroll`, `browser_evaluate`, `browser_screenshot`, `browser_get_html`, `browser_close`, cookie and tab management, and more.
+30+ tools for multi-step browser automation (Browser Sessions): `browser_navigate`, `browser_click`, `browser_fill`, `browser_scroll`, `browser_evaluate`, `browser_screenshot`, `browser_get_html`, `browser_close`, cookie and tab management, and more.
 
 ## A. Tool selection
 
-- When the user asks to scrape, fetch, or read a URL, call the `scrape` MCP tool immediately. Do not inspect plugin repo files (`.mcp.json`, manifests, README) or diagnose MCP setup unless the user explicitly asks about installation, configuration, or debugging.
+- When the user asks to scrape, fetch, or read a URL, call the `scrape` MCP tool immediately. Do not inspect plugin repo files (`mcp.json`, manifests, README) or diagnose MCP setup unless the user explicitly asks about installation, configuration, or debugging.
 - Use `scrape` for single-page reads: documentation, blog posts, pricing pages, API references, changelogs, product listings.
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
@@ -47,12 +47,12 @@ Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`
 - `mode='auto'` handles most blocking and rendering issues by escalating internally, so a single call is usually enough. Do not build manual retry ladders around it.
 - 429 (Too Many Requests): the plan concurrency limit was hit. Wait and retry, or tell the user about their plan limits.
 - 413 (Content Too Large): narrow the response with `css_extractor`, or keep `response_type: markdown`, to reduce payload size.
-- 401 or an `AUTH` error code: the OAuth session is missing or expired. Tell the user to complete the ZenRows login in the client (Cursor shows "Needs login" next to the server); do not attempt to supply a key.
+- 401 or an `AUTH` error code: the OAuth session is missing or expired. Tell the user to complete the Zenrows login in the client (Cursor shows "Needs login" next to the server); do not attempt to supply a key.
 
 ## Concurrency
 
-ZenRows plans have concurrency limits (for example 5 on Developer, up to 100 or more on higher plans). The agent may fire multiple tool calls in parallel.
+Zenrows plans have concurrency limits (for example 5 on Developer, up to 100 or more on higher plans). The agent may fire multiple tool calls in parallel.
 
 - Always call `browser_close` when a browser session is done, to free a concurrency slot.
 - Do not leave multiple browser sessions open at once.
-- If the user cancels a task mid-flight, ZenRows may keep processing server-side for up to 3 minutes, which holds a slot until it completes.
+- If the user cancels a task mid-flight, Zenrows may keep processing server-side for up to 3 minutes, which holds a slot until it completes.

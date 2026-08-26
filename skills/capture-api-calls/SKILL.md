@@ -30,4 +30,4 @@ If `performance.getEntriesByType` returns nothing (a single-page app with deferr
 
 ## Note
 
-The ZenRows `scrape` tool does not expose a network-capture parameter, so use the browser-plus-evaluate workflow above. If one is added, this skill collapses to a single `scrape` call.
+The Zenrows `scrape` tool does not expose a network-capture parameter, so use the browser-plus-evaluate workflow above. If one is added, this skill collapses to a single `scrape` call.

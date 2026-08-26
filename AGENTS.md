@@ -1,29 +1,29 @@
 # Agent guide
 
-This file orients AI coding agents (Cursor's agent, Claude Code, Codex, and so on) working on this repo, the ZenRows Cursor plugin source. It is not for end users of the plugin and is not loaded by the plugin at runtime.
+This file orients AI coding agents (Cursor's agent, Claude Code, Codex, and so on) working on this repo, the Zenrows Cursor plugin source. It is not for end users of the plugin and is not loaded by the plugin at runtime.
 
 For runtime guidance to agents using the plugin, see [rules/zenrows.mdc](rules/zenrows.mdc).
 
 ## What this repo is
 
-A Cursor plugin that connects [Cursor] to the hosted ZenRows MCP server and ships agent guidance (an always-on rule, task skills, and a status command) so the agent uses ZenRows' scraping tools well.
+A Cursor plugin that connects [Cursor] to the hosted Zenrows MCP server and ships agent guidance (an always-on rule, task skills, and a status command) so the agent uses Zenrows' scraping tools well.
 
-The plugin does not contain MCP server code. The server is hosted by ZenRows at `https://mcp.zenrows.com/mcp` and is reached over HTTP per [.mcp.json](.mcp.json). The plugin contains only the manifest, the MCP config, the rule, the skills, the command, dev scripts, and the logo.
+The plugin does not contain MCP server code. The server is hosted by Zenrows at `https://mcp.zenrows.com/mcp` and is reached over HTTP per [mcp.json](mcp.json). The plugin contains only the manifest, the MCP config, the rule, the skills, the command, dev scripts, and the logo.
 
 ## Current auth model
 
-The plugin points at the hosted ZenRows MCP server by URL. Authentication is OAuth, handled by the MCP client (Cursor): on first connect Cursor opens a browser for login, then stores and refreshes the token. There is no API key, no `ZENROWS_API_KEY` environment variable, no `env` block in `.mcp.json`, and no local server launched via `npx`. The agent never sees a credential. Do not reintroduce key-based config.
+The plugin points at the hosted Zenrows MCP server by URL. Authentication is OAuth, handled by the MCP client (Cursor): on first connect Cursor opens a browser for login, then stores and refreshes the token. There is no API key, no `ZENROWS_API_KEY` environment variable, no `env` block in `mcp.json`, and no local server launched via `npx`. The agent never sees a credential. Do not reintroduce key-based config.
 
 ## Repo map
 
 | Path | What lives there |
 |------|------------------|
 | `.cursor-plugin/plugin.json` | Manifest: name, category, tags, logo, and paths to rules, skills, commands, and the MCP config. |
-| `.mcp.json` | The hosted ZenRows MCP server URL. Reached over HTTP; authorized by the client via OAuth. No command, args, or env. |
+| `mcp.json` | The hosted Zenrows MCP server URL. Reached over HTTP; authorized by the client via OAuth. No command, args, or env. |
 | `rules/zenrows.mdc` | Always-loaded rule: tool selection, parameter notes, security, error handling, concurrency. |
 | `skills/<name>/SKILL.md` | Activates on its `description`. One skill per discrete capability. |
 | `commands/zenrows-doctor.md` | `/zenrows-doctor` slash command: connection and authorization check. |
-| `scripts/local-install.sh` | Copies the plugin to `~/.cursor/plugins/zenrows` and registers it via the `~/.claude` config surface for local testing. |
+| `scripts/local-install.sh` | Symlinks the repo into `~/.cursor/plugins/local/zenrows` for local testing. |
 | `scripts/validate-template.mjs` | Pre-submit linter for manifest fields, frontmatter, and MCP config. |
 | `assets/logo.png` | Marketplace logo. An SVG would scale better at listing sizes; converting it is a pending design task. |
 
@@ -68,17 +68,19 @@ Bump `version` (SemVer) and add a `CHANGELOG.md` entry on every release.
 
 ## What this repo does not own
 
-- MCP server code, tool schemas, response shapes, and browser session lifecycle. All hosted by ZenRows behind the MCP URL. File issues with ZenRows; do not patch tool behavior here.
+- MCP server code, tool schemas, response shapes, and browser session lifecycle. All hosted by Zenrows behind the MCP URL. File issues with Zenrows; do not patch tool behavior here.
 - Authentication. Owned by the hosted server's OAuth provider and the client's token handling. The plugin only declares the server URL.
-- The API parameter reference at https://docs.zenrows.com/universal-scraper-api/api-reference. Link to it; do not restate it.
-- Cursor's plugin and MCP behavior (restart required for `.mcp.json` edits, no relative-path resolution, no live skill reload, OAuth token reset via "Clear All MCP Tokens"). Document these in `CONTRIBUTING.md`; do not try to work around them.
+- The API parameter reference at https://docs.zenrows.com/fetch/api-reference. Link to it; do not restate it.
+- Cursor's plugin and MCP behavior (restart required for `mcp.json` edits, no relative-path resolution, no live skill reload, OAuth token reset via "Clear All MCP Tokens"). Document these in `CONTRIBUTING.md`; do not try to work around them.
 
-## ZenRows context the agent should know
+## Zenrows context the agent should know
 
-ZenRows ships three products; this plugin surfaces the first two via the hosted MCP:
+Zenrows ships four primitives: Fetch, Extract, Batch, and Browser Sessions. This plugin surfaces what the hosted MCP exposes:
 
-- Universal Scraper API, the `scrape` tool. Params: `mode='auto'` (adaptive stealth, the default), `proxy_country`, `css_extractor`, `autoparse`, `outputs`, `wait_for`, `wait`, `js_instructions`, `response_type`, `screenshot*`, `session_id`, `custom_headers`. `js_render` and `premium_proxy` exist but are managed by `mode='auto'`; do not set them by hand.
-- Scraping Browser, the `browser_*` tools. Always start with `browser_navigate` (returns `session_id`) and always end with `browser_close`.
+- Fetch, the `scrape` tool. Params: `mode='auto'` (adaptive stealth, the default), `proxy_country`, `css_extractor`, `autoparse`, `outputs`, `wait_for`, `wait`, `js_instructions`, `response_type`, `screenshot*`, `session_id`, `custom_headers`. `js_render` and `premium_proxy` exist but are managed by `mode='auto'`; do not set them by hand.
+- Browser Sessions, the `browser_*` tools. Always start with `browser_navigate` (returns `session_id`) and always end with `browser_close`.
+- Extract is reached through `scrape` parameters (`autoparse`, `css_extractor`, `outputs`), not a separate MCP tool.
+- Batch (large managed URL jobs) has no documented MCP tool as of 2026-08-26; it is REST and SDK only, see https://docs.zenrows.com/batch/introduction. Do not write skills that assume an MCP batch tool without confirming against the live server.
 - Residential Proxies, not exposed via MCP.
 
 If the hosted MCP exposes a usage or subscription-status tool, `/zenrows-doctor` should call it for plan and credit reporting. Otherwise doctor falls back to a probe scrape to confirm connection and authorization.

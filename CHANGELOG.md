@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial Cursor plugin for ZenRows
-- Connects to the hosted ZenRows MCP server over OAuth (no API key, no environment variable, no local server)
+- Initial Cursor plugin for Zenrows
+- Connects to the hosted Zenrows MCP server over OAuth (no API key, no environment variable, no local server)
 - Always-on rule (`rules/zenrows.mdc`) covering tool selection, security, and error handling
 - Task skills: `scrape-webpage`, `extract-structured-data`, `crawl`, `map`, `browser-automation`, `capture-api-calls`, `getting-started`
 - `/zenrows-doctor` command to check connection and authorization status
