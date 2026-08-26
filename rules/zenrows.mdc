@@ -36,6 +36,7 @@ A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`
 - Use `extract` when the user wants named fields or structured JSON from one page, not its prose.
 - Use `batch_create` when the user already has roughly five or more URLs. Below that, parallel `scrape` calls are cheaper than a job round trip. Above it, one job beats N calls: server-side retries, no concurrency 429s. Confirm the list size with the user first; a batch bills per URL.
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
+- Group known browser steps into one `browser_batch` call (up to 50 ordered actions, reads included) instead of many single calls. Each round trip costs seconds. Action names inside it drop the `browser_` prefix.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
 - Default to `mode='auto'` (Adaptive Stealth Mode). It starts simple and escalates to JS rendering or premium proxies automatically, only when a site needs it, and bills only for the configuration that succeeds. Do not set `js_render` or `premium_proxy` by hand; `mode='auto'` manages them.
 - Before starting any multi-page or multi-step task (crawl, bulk extraction, browser session loop), confirm scope with the user if it is not explicit — page count, depth limit, or a clear stopping condition. Each request consumes credits; an unbounded task can be costly.

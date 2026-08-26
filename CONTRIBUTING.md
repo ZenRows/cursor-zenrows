@@ -10,7 +10,9 @@ End users need none of the above except Cursor and a Zenrows account; there is n
 
 ## Local testing in Cursor
 
-Cursor loads local plugins from `~/.cursor/plugins/local/<name>/`. `scripts/local-install.sh` symlinks this repo into that folder, so edits here are picked up without re-copying.
+Cursor loads local plugins from `~/.cursor/plugins/local/<name>/`. `scripts/local-install.sh` copies the plugin components there.
+
+Cursor's docs suggest symlinking the repo into that folder instead. It does not work: the plugin silently fails to load, even after a full quit. Copy, and re-run the script after every change.
 
 ```bash
 bash scripts/local-install.sh
