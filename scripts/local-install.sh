@@ -1,72 +1,49 @@
 #!/usr/bin/env bash
-# Install the ZenRows plugin into Cursor for local testing.
+# Install the Zenrows plugin into Cursor for local testing.
 #
-# Cursor's IDE has no "load from a local folder" option, so this script does
-# what the IDE won't: it copies the plugin into ~/.cursor/plugins/ AND registers
-# it via the ~/.claude config surface that Cursor shares with Claude Code.
+# Cursor loads local plugins from ~/.cursor/plugins/local/<name>/.
 #
-# Auth is OAuth, handled by Cursor. There is no API key or environment variable.
-# Re-run after any change, then FULLY restart Cursor (Cmd+Q and reopen). No hot reload.
+# Cursor's docs suggest symlinking the repo there. That does NOT work: the
+# plugin silently fails to load, even after a full quit. Copy instead, and
+# re-run this script after every change.
+# Reference: https://cursor.com/docs/plugins
+#
+# Auth is OAuth, handled by Cursor. There is no API key and no environment variable.
 set -euo pipefail
-command -v python3 >/dev/null || { echo "python3 is required"; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PLUGIN_NAME="zenrows"
-PLUGIN_ID="${PLUGIN_NAME}@local"
-TARGET="$HOME/.cursor/plugins/$PLUGIN_NAME"
-CLAUDE_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
-CLAUDE_SETTINGS="$HOME/.claude/settings.json"
+TARGET="$HOME/.cursor/plugins/local/$PLUGIN_NAME"
 
-# 1. Copy plugin files. Absolute install path; relative paths are unreliable.
-echo "Copying plugin to $TARGET"
+# Only the components the manifest declares. Keeps .git, docs and scripts out.
+COMPONENTS=(.cursor-plugin mcp.json rules skills commands assets)
+
 rm -rf "$TARGET"
-mkdir -p "$TARGET" "$HOME/.claude/plugins"
-for item in .cursor-plugin commands rules skills scripts assets .mcp.json; do
-  [[ -e "$REPO_ROOT/$item" ]] && cp -R "$REPO_ROOT/$item" "$TARGET/"
+mkdir -p "$TARGET"
+for item in "${COMPONENTS[@]}"; do
+  if [[ -e "$REPO_ROOT/$item" ]]; then
+    cp -R "$REPO_ROOT/$item" "$TARGET/"
+  else
+    echo "warning: $item not found in repo, skipping" >&2
+  fi
 done
 
-# 2. Register in installed_plugins.json (upsert; do not clobber other plugins).
-python3 - "$CLAUDE_PLUGINS" "$PLUGIN_ID" "$TARGET" <<'PY'
-import json, os, sys
-path, pid, ipath = sys.argv[1], sys.argv[2], sys.argv[3]
-data = json.load(open(path)) if os.path.exists(path) else {}
-if not isinstance(data, dict):
-    data = {}
-plugins = data.get("plugins", {})
-entries = [e for e in plugins.get(pid, [])
-           if not (isinstance(e, dict) and e.get("scope") == "user")]
-entries.insert(0, {"scope": "user", "installPath": ipath})
-plugins[pid] = entries
-data["plugins"] = plugins
-os.makedirs(os.path.dirname(path), exist_ok=True)
-json.dump(data, open(path, "w"), indent=2)
-print("Registered", pid)
-PY
-
-# 3. Enable in settings.json (upsert).
-python3 - "$CLAUDE_SETTINGS" "$PLUGIN_ID" <<'PY'
-import json, os, sys
-path, pid = sys.argv[1], sys.argv[2]
-data = json.load(open(path)) if os.path.exists(path) else {}
-if not isinstance(data, dict):
-    data = {}
-data.setdefault("enabledPlugins", {})[pid] = True
-os.makedirs(os.path.dirname(path), exist_ok=True)
-json.dump(data, open(path, "w"), indent=2)
-print("Enabled", pid)
-PY
+echo "Copied plugin to $TARGET"
 
 cat <<'NOTE'
 
-Done. Next:
-  1. If rules/skills/commands do not appear after restart, turn on
-     "Include third-party Plugins, Skills, and other configs" under
-     Settings > Features.
-  2. Fully quit Cursor (Cmd+Q) and reopen.
-  3. In Settings > Tools and MCP, click "Needs login" next to zenrows and
-     authorize in the browser (OAuth). No API key is involved.
-  4. Verify with /zenrows-doctor, then try: "fetch https://httpbin.org/get".
-     If the connection hangs, run "Cursor: Clear All MCP Tokens", restart,
-     and re-authorize.
+Next:
+  1. Fully quit Cursor (Cmd+Q) and reopen. A window reload is not enough for a
+     newly added or changed local plugin.
+     If components still do not appear, check "Include third-party Plugins,
+     Skills, and other configs" under Settings > Features.
+  2. Settings > MCPs should list a "zenrows" server. Click "Needs login" and
+     complete the Zenrows authorization in your browser (OAuth).
+     Expand the server there to see every tool it exposes.
+  3. Verify with /zenrows-doctor, then try: "fetch https://httpbin.io/get".
+     If the connection hangs, run "Cursor: Clear All MCP Tokens" from the
+     command palette, restart, and re-authorize.
+
+  There is no hot reload. Re-run this script and restart after each change.
 NOTE

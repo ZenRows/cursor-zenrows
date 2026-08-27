@@ -1,6 +1,6 @@
 ---
 name: crawl
-description: Collect the content of many pages under one site or section by following internal links from a starting URL. Use when the user wants more than one page, for example "all the docs under /guide" or "every blog post on this site". Not for listing URLs without fetching their content (use map), and not for a single page (use scrape-webpage).
+description: Collect the content of many pages under one site or section by following internal links from a starting URL. Use when the user wants more than one page, for example "all the docs under /guide" or "every blog post on this site". Not for listing URLs without fetching their content (use map), not for a single page (use scrape-webpage), and not for a list of URLs the user already has (use batch).
 ---
 
 # Crawl from a seed URL
@@ -27,3 +27,4 @@ Discover and fetch internal pages starting from one seed, staying on the same ho
 - A crawl multiplies requests, so `max_pages` and `max_depth` are the cost control. Keep them as low as the task allows.
 - `mode='auto'` applies on every fetch, so protected pages still return.
 - For URL discovery without fetching content, use the `map` skill instead. It is far cheaper.
+- Once the URL list is known (for example from `map`), use the `batch` skill rather than this loop. Batch submits them as one managed job with server-side retries.

@@ -1,21 +1,21 @@
-# ZenRows Cursor Plugin
+# Zenrows Cursor Plugin
 
-Web data for Cursor. Scrape, crawl, and map any site, run browser automation, and pull structured data, straight from your AI agent in plain English. Powered by the [ZenRows Universal Scraper API](https://docs.zenrows.com/universal-scraper-api/api-reference) and [Scraping Browser](https://docs.zenrows.com/scraping-browser/introduction).
+Web data for Cursor. Scrape, crawl, and map any site, run browser automation, and pull structured data, straight from your AI agent in plain English. Powered by [Zenrows Fetch](https://docs.zenrows.com/fetch/api-reference) and [Browser Sessions](https://docs.zenrows.com/browser-sessions/introduction).
 
 ## Prerequisites
 
 - [Cursor](https://cursor.com)
-- A [ZenRows account](https://app.zenrows.com/register) to authorize with
+- A [Zenrows account](https://app.zenrows.com/register) to authorize with
 
 ## Installation
 
 ### 1. Install the plugin
 
-Install ZenRows from the Cursor Marketplace.
+Install Zenrows from the Cursor Marketplace.
 
 ### 2. Authorize
 
-The plugin adds the hosted ZenRows MCP server. After installing, open Settings, Tools and MCP, find the `zenrows` server, click “Connect”, and complete the ZenRows authorization in your browser. Cursor stores and refreshes the token for you.
+The plugin adds the hosted Zenrows MCP server. After installing, open Settings, Tools and MCP, find the `zenrows` server, click “Connect”, and complete the Zenrows authorization in your browser. Cursor stores and refreshes the token for you.
 
 ### 3. Verify
 
@@ -39,14 +39,14 @@ Run `/zenrows-doctor` in a chat to confirm the connection is live and authorized
 | Component | Purpose |
 |-----------|---------|
 | `rules/zenrows.mdc` | Always-on guidance for tool selection and safe use |
-| `skills/` | Task workflows: scrape, extract, crawl, map, browser automation, API discovery, getting started |
+| `skills/` | Task workflows: scrape, extract, batch, crawl, map, browser automation, API discovery, getting started |
 | `commands/zenrows-doctor.md` | `/zenrows-doctor` connection and auth check |
-| `.mcp.json` | Connects to the hosted ZenRows MCP server over OAuth |
+| `mcp.json` | Connects to the hosted Zenrows MCP server over OAuth |
 
 ## Links
 
-- [ZenRows MCP documentation](https://docs.zenrows.com/integrations/mcp/mcp-overview)
-- [Create a ZenRows account](https://app.zenrows.com/register)
+- [Zenrows MCP documentation](https://docs.zenrows.com/mcp/overview)
+- [Create a Zenrows account](https://app.zenrows.com/register)
 
 ## Contributing
 

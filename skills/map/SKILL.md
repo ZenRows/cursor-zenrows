@@ -1,6 +1,6 @@
 ---
 name: map
-description: Discover the URLs that exist on a site without fetching page content, usually from its sitemap. Use when the user wants a list of a site's pages, its structure, or "what's on this site". Not for retrieving page content (use scrape-webpage or crawl).
+description: Discover the URLs that exist on a site without fetching page content, usually from its sitemap. Use when the user wants a list of a site's pages, its structure, or "what's on this site". Not for retrieving page content (use scrape-webpage, batch, or crawl).
 ---
 
 # Map a site's URLs
@@ -16,5 +16,5 @@ Return a flat list of discovered URLs and nothing else. This costs 1 to 3 reques
 
 ## Notes
 
-- Output is a list of URLs only. If the user then wants page content, hand off to `scrape-webpage` (one page) or `crawl` (many).
+- Output is a list of URLs only. If the user then wants page content, hand off to `scrape-webpage` (one page) or `batch` (the discovered list, as one managed job).
 - For a large list, write it to `./.zenrows/map-<host>-<timestamp>.txt` and report the count rather than pasting everything into the conversation.

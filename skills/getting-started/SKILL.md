@@ -1,20 +1,20 @@
 ---
 name: getting-started
-description: First-run setup and troubleshooting for the ZenRows plugin. Use when the plugin was just installed, scraping is not working, a ZenRows tool is missing or "not available", the connection shows "Needs login" or "disconnected", or the user asks whether ZenRows is set up. Not for normal scraping tasks once the plugin works (use scrape-webpage).
+description: First-run setup and troubleshooting for the Zenrows plugin. Use when the plugin was just installed, scraping is not working, a Zenrows tool is missing or "not available", the connection shows "Needs login" or "disconnected", or the user asks whether Zenrows is set up. Not for normal scraping tasks once the plugin works (use scrape-webpage).
 ---
 
 # Getting started
 
-Run the checks below. Do the work; do not just print instructions. ZenRows authenticates through OAuth in the client, so there is no API key to set.
+Run the checks below. Do the work; do not just print instructions. Zenrows authenticates through OAuth in the client, so there is no API key to set.
 
 ## 1. Probe the connection
 
-First confirm the ZenRows MCP tools (`scrape`, `browser_*`) are available in this session.
+First confirm the Zenrows MCP tools (`scrape`, `browser_*`) are available in this session.
 
 - Tools missing entirely: the MCP server is not connected. Check that the plugin is installed and enabled, that Cursor was fully restarted, and that Settings, Tools and MCP shows a `zenrows` entry.
-- Tools present: call `scrape(url='https://httpbin.org/get', response_type='plaintext', mode='auto')` and branch:
-  - 200 with a body: ZenRows is working. Go to step 2.
-  - 401, or an `AUTH` error: the OAuth login is missing or expired. Tell the user to complete the ZenRows authorization when Cursor shows "Needs login" next to the server, or, if the connection is stuck, run "Cursor: Clear All MCP Tokens" from the command palette (Cmd+Shift+P) and re-authorize, then retry.
+- Tools present: call `scrape(url='https://httpbin.io/get', response_type='plaintext', mode='auto')` and branch:
+  - 200 with a body: Zenrows is working. Go to step 2.
+  - 401, or an `AUTH` error: the OAuth login is missing or expired. Tell the user to complete the Zenrows authorization when Cursor shows "Needs login" next to the server, or, if the connection is stuck, run "Cursor: Clear All MCP Tokens" from the command palette (Cmd+Shift+P) and re-authorize, then retry.
 
 ## 2. First successful scrape
 
