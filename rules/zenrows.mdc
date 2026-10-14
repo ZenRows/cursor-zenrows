@@ -60,7 +60,7 @@ A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`
 - `mode='auto'` handles most blocking and rendering issues by escalating internally, so a single call is usually enough. Do not build manual retry ladders around it.
 - 429 (Too Many Requests): the plan concurrency limit was hit. Wait and retry, or tell the user about their plan limits.
 - 413 (Content Too Large): narrow the response with `css_extractor`, or keep `response_type: markdown`, to reduce payload size.
-- `AUTH010` from `extract`: the domain is outside the Extract open beta. `fallback_autoparse` defaults to `true` and retries with autoparse; only surface the error if the user asked for strict extraction.
+- `REQS007` (or the older `AUTH010`) from `extract`: the domain isn't prepared for Extract yet. `fallback_autoparse` defaults to `true` and retries with autoparse; only surface the error if the user asked for strict extraction.
 - 401 or an `AUTH` error code: the OAuth session is missing or expired. Tell the user to complete the Zenrows login in the client (Cursor shows "Needs login" next to the server); do not attempt to supply a key.
 
 ## Concurrency
