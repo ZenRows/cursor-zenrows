@@ -1,5 +1,5 @@
 ---
-description: Guidance for using the Zenrows scrape and browser_* MCP tools.
+description: Guidance for using the Zenrows scrape, extract, batch_*, crawl_* and browser_* MCP tools.
 alwaysApply: true
 ---
 
@@ -25,6 +25,10 @@ Structured extraction from one page. Returns JSON. Params: `url`, `mode` (`auto`
 
 A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`), `batch_status`, `batch_wait`, `batch_results` (optional `status` filter), `batch_cancel`. Server-side retries; results fetched by `job_id`.
 
+### `crawl_*`
+
+One background job that follows links from a start URL: `crawl_create`, `crawl_wait`, `crawl_get`, `crawl_results`, `crawl_content`, `crawl_list`, `crawl_stop` and `crawl_download`. Stays on the start URL's domain, de-duplicates, and filters with `include_patterns` / `exclude_patterns`. See the `crawl` skill.
+
 ### `browser_*`
 
 30+ tools for multi-step browser automation (Browser Sessions): `browser_navigate`, `browser_click`, `browser_fill`, `browser_scroll`, `browser_evaluate`, `browser_screenshot`, `browser_get_html`, `browser_close`, cookie and tab management, and more.
@@ -35,6 +39,7 @@ A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`
 - Use `scrape` for single-page reads: documentation, blog posts, pricing pages, API references, changelogs, product listings.
 - Use `extract` when the user wants named fields or structured JSON from one page, not its prose.
 - Use `batch_create` when the user already has roughly five or more URLs. Below that, parallel `scrape` calls are cheaper than a job round trip. Above it, one job beats N calls: server-side retries, no concurrency 429s. Confirm the list size with the user first; a batch bills per URL.
+- Use `crawl_create` when the user has one start page and wants the pages behind it. Confirm `max_pages` first: each page fetched bills as one scrape. Do not emulate a crawl with repeated `scrape` calls.
 - Use `browser_*` when the task requires interaction: form submission, authentication, pagination clicks, infinite scroll, multi-step navigation, or maintaining session state.
 - Group known browser steps into one `browser_batch` call (up to 50 ordered actions, reads included) instead of many single calls. Each round trip costs seconds. Action names inside it drop the `browser_` prefix.
 - Default `response_type` to `markdown`. It is the most compact and AI-readable format.
@@ -68,6 +73,7 @@ A managed job over many URLs: `batch_create` (`tasks` or `urls`, optional `wait`
 Zenrows plans have concurrency limits (for example 5 on Developer, up to 100 or more on higher plans). The agent may fire multiple tool calls in parallel.
 
 - Prefer one `batch_create` over many parallel `scrape` calls. Batch manages its own queueing; parallel calls hit the plan limit and return 429.
+- An account runs at most 3 Batch and Crawl jobs at once by default, shared between the two.
 - Always call `browser_close` when a browser session is done, to free a concurrency slot.
 - Do not leave multiple browser sessions open at once.
 - If the user cancels a task mid-flight, Zenrows may keep processing server-side for up to 3 minutes, which holds a slot until it completes.
