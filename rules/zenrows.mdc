@@ -17,7 +17,9 @@ Key parameters: `url`, `mode`, `response_type`, `proxy_country`, `css_extractor`
 
 ### `extract`
 
-Structured extraction from one page. Returns JSON. Params: `url`, `mode` (`auto` | `autoparse` | `css`), `css_extractor` (required when `mode='css'`), `js_render`, `premium_proxy`, `mode_auto`, `proxy_country`, `wait_for`, `wait`, `fallback_autoparse`.
+Structured extraction from one page. Returns JSON. Params: `url`, `mode` (`auto` by default, or `css`; `autoparse` is deprecated), `css_extractor` (required when `mode='css'`), `include_html`, `js_render`, `premium_proxy`, `mode_auto`, `proxy_country`, `wait_for`, `wait`.
+
+`prepare_domain` and `prepared_domain_status` prepare a domain for `extract` when it answers `REQS007` with reason `domain_not_prepared` (see the `extract-structured-data` skill).
 
 `mode` on `extract` selects the extraction strategy. It is NOT the stealth `mode` used by `scrape`; Adaptive Stealth on `extract` is the boolean `mode_auto`.
 
@@ -65,7 +67,7 @@ One background job that follows links from a start URL: `crawl_create`, `crawl_w
 - `mode='auto'` handles most blocking and rendering issues by escalating internally, so a single call is usually enough. Do not build manual retry ladders around it.
 - 429 (Too Many Requests): the plan concurrency limit was hit. Wait and retry, or tell the user about their plan limits.
 - 413 (Content Too Large): narrow the response with `css_extractor`, or keep `response_type: markdown`, to reduce payload size.
-- `REQS007` (or the older `AUTH010`) from `extract`: the domain isn't prepared for Extract yet. `fallback_autoparse` defaults to `true` and retries with autoparse; only surface the error if the user asked for strict extraction.
+- `REQS007` (or the older `AUTH010`) from `extract`: read its `reason`. `domain_not_prepared`: prepare the domain with `prepare_domain` and wait for `prepared_domain_status` to say `ready`. `page_not_recognised`: try a product, article or listing page, or `mode='css'`; don't prepare the domain again. `domain_not_enabled`: use `mode='css'`. Not charged in any case. Details in the `extract-structured-data` skill.
 - 401 or an `AUTH` error code: the OAuth session is missing or expired. Tell the user to complete the Zenrows login in the client (Cursor shows "Needs login" next to the server); do not attempt to supply a key.
 
 ## Concurrency
